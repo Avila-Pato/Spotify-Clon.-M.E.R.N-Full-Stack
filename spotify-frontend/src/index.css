@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Quita la barra de scroll */
+::-webkit-scrollbar {
+  display: none;
+}
