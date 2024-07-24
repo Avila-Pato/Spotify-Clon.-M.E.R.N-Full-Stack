@@ -16,6 +16,17 @@ connectCloudinary();
 app.use(express.json());
 app.use(cors());
 
+
+
+// Definiendo la ruta /api/song/add para manejar POST requests
+app.post("/api/song/add", (req, res) => {
+    const newSong = req.body;
+    // Aquí agrega  la lógica para guardar la canción en la base de datos
+    res.status(201).json({ message: "Song added successfully", song: newSong });
+});
+
+
 // Iniciando routes
 app.get("/", (req, res) => res.send("Api FUNCIONA"));
+
 app.listen(port, () => console.log(`listening on port ${port}`));

@@ -1,23 +1,51 @@
-import { v2 as cloudinary } from "cloudinary"
+import { v2 as cloudinary } from "cloudinary";
+import songModel from "../models/songModel.js";
 
-const  addSong = async(req , res) => {
-        try {
-            const name = req.body.name;
-            const desc = req.body.desc;
-            const album = req.body.album;
-            const audioFile = req.files.audio[0];
-            const imageFile = req.files.image[0];
-            const audioUpload = await cloudinary.uploader.upload(audioFile.path, {resource_type: "video"})
-            const imageUpload = await cloudinary.uploader.upload(imageFile.path, {resource_type: "image"})
+const addSong = async (req, res) => {
+    try {
+        const { name, desc, album } = req.body;
+        const audioFile = req.files.audio[0];
+        const imageFile = req.files.image[0];
 
-            console.log(name,desc,album,audioUpload,imageUpload)
+        // Sube el archivo de audio
+        const audioUpload = await cloudinary.uploader.upload(audioFile.path, { resource_type: "video" });
+        // Sube el archivo de imagen
+        const imageUpload = await cloudinary.uploader.upload(imageFile.path, { resource_type: "image" });
 
-        }catch(error) {
+        // Calcula la duración en minutos y segundos
+        const minutes = Math.floor(audioUpload.duration / 60);
+        const seconds = Math.floor(audioUpload.duration % 60);
+        const duration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
-        }
-}
+        // Crea el objeto con los datos de la canción
+        const songData = {
+            name,
+            desc,
+            album,
+            image: imageUpload.secure_url,
+            file: audioUpload.secure_url,
+            duration
+        };
 
-const listSong = async (req, res ) => {
+        // Guarda la canción en la base de datos
+        const song = new songModel(songData);
+        await song.save();
 
-}
-export {addSong, listSong}
+        res.json({ success: true, message: "Canción agregada" });
+    } catch (error) {
+        console.error(error); // Loguea el error para debug
+        res.status(500).json({ success: false, message: "Error al agregar la canción" });
+    }
+};
+
+const listSong = async (req, res) => {
+    try {
+        const songs = await songModel.find(); // Obtén todas las canciones
+        res.json({ success: true, songs });
+    } catch (error) {
+        console.error(error); // Loguea el error para debug
+        res.status(500).json({ success: false, message: "Error al obtener las canciones" });
+    }
+};
+
+export { addSong, listSong };
