@@ -3,7 +3,9 @@ import songModel from "../models/songModel.js";
 
 const addSong = async (req, res) => {
     try {
-        const { name, desc, album } = req.body;
+        const name = req.body.name;     
+        const desc = req.body.desc; 
+        const album = req.body.album; 
         const audioFile = req.files.audio[0];
         const imageFile = req.files.image[0];
 
