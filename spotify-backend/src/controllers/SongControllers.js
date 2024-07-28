@@ -19,6 +19,8 @@ const addSong = async (req, res) => {
         const seconds = Math.floor(audioUpload.duration % 60);
         const duration = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
+        
+
         // Crea el objeto con los datos de la canción
         const songData = {
             name,
@@ -42,12 +44,23 @@ const addSong = async (req, res) => {
 
 const listSong = async (req, res) => {
     try {
-        const songs = await songModel.find(); // Obtén todas las canciones
-        res.json({ success: true, songs });
+        const songs = await songModel.find({}); // Obtén todas las canciones
+        res.json({ success: true, songs: allSongs });
+
     } catch (error) {
         console.error(error); // Loguea el error para debug
         res.status(500).json({ success: false, message: "Error al obtener las canciones" });
     }
 };
 
-export { addSong, listSong };
+const removeSong = async (req, res) => {
+    try{
+        await songModel.findByIdAndDelete(req.body.id); // Elimina la canción con el id especificado
+        res.json({ success: true, message: "Canción eliminada" });
+    }catch(error){
+        console.error(error); // Loguea el error para debug
+        res.status(500).json({ success: false, message: "Error al eliminar la canción" });
+    }
+}
+
+export { addSong, listSong, removeSong };
