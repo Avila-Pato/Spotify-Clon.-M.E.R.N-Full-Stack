@@ -49,3 +49,31 @@ La aplicación está dividida en tres partes: **Frontend**, **Backend**, y **Adm
    ```bash
    git clone https://github.com/Avila-Pato/spotify-clone.git
 
+## Cómo Funciona
+
+Para levantar el proyecto, debes iniciar tres servidores: `admin`, `backend`, y `frontend`. Sigue estos pasos:
+
+1. **Servidor Admin**
+   - Ejecuta `npm run dev` en la carpeta del panel de administración para iniciar el servidor del panel administrativo.
+
+2. **Servidor Backend**
+   - Ejecuta `npm run server` en la carpeta del backend para iniciar el servidor del backend.
+
+3. **Servidor Frontend**
+   - Ejecuta `npm run dev` en la carpeta del frontend para iniciar el servidor del frontend.
+
+### Uso del Panel de Administración
+
+En el panel de administración, podrás agregar canciones con la siguiente información:
+- **Imagen**: La imagen de la canción.
+- **Nombre**: El nombre de la canción.
+- **Descripción**: Una breve descripción de la canción.
+- **Álbum**: El álbum al que pertenece la canción.
+
+### Escuchar Música
+
+Una vez que hayas agregado canciones en el panel de administración, podrás escuchar tu música desde el frontend. 
+
+**Nota**: El archivo `.env` es proporcionado solo para fines profesionales y no debe compartirse públicamente.
+
+
