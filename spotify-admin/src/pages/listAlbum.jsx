@@ -44,7 +44,7 @@ const ListAlbum = () => {
         <div className="sm:grid hidden grid-cols-[0.5fr_1fr_2fr_1fr_0.5fr] items-center gap-2.5 p-3 border border-gray-300 text-sm mr-5 bg-gray-100">
           <b>Imagen</b>
           <b>Nombre</b>
-          <b>Artista</b>
+          <b>Descripcion</b>
           <b>Color de album</b>
           <b>Eliminar</b>
         </div>

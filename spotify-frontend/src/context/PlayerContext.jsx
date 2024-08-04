@@ -1,6 +1,8 @@
 import { createContext, useEffect, useRef, useState } from "react";
 import React from "react";
-import { songsData } from "../assets/frontend-assets/assets";
+
+import axios from "axios";
+
 
 export const PlayerContext = createContext();
 
@@ -8,10 +10,14 @@ const PlayerContextProvider = (props) => {
   const audioRef = useRef();
   const seekBar = useRef();
   const seekBg = useRef();
-
+  
+  //se creara una url para guardar el backend url
+  const url = "http://localhost:4000";
+  //se crean 2 variables para las canciones y albunes
+  const [songsData, setSongsData] = useState([]);
+  const  [albumsData, setAlbumData] = useState([]);
   const [track, setTrack] = useState(songsData[0]);
   const [playStatus, setPlayStatus] = useState(false);
-
   const [time, setTime] = useState({
     currentTime: {
       second: 0,
@@ -35,26 +41,42 @@ const PlayerContextProvider = (props) => {
 
   // Ecoger musica del menu segun cual queramos
   const playWithId = async (id) => {
-    await setTrack(songsData[id]);
+    await songsData.map((item)=>{
+      if(id === item._id ){
+        setTrack(item)
+      }
+    })
     await audioRef.current.play();
     setPlayStatus(true);
   };
 
-  //
+  // escoger musica anterior
 
   const previous = async () => {
-    if (track.id > 0) {
-      await setTrack(songsData[track.id - 1]);
-      await audioRef.current.play();
-    }
+
+    songsData.map(async (item, index) => {
+    
+      if (track._id === item._id && index > 0) {
+    
+    
+        await setTrack(songsData[index - 1]);
+        await audioRef.current.play();
+        setPlayStatus(true);
+      }
+    });
   };
 
   const next = async () => {
-    if (track.id < songsData.length - 1) {
-      await setTrack(songsData[track.id + 1]);
-      await audioRef.current.play();
-      setPlayStatus(true);
-    }
+    songsData.map(async (item, index) => {
+    
+      if (track._id === item._id && index < songsData.length ) {
+    
+    
+        await setTrack(songsData[index + 1]);
+        await audioRef.current.play();
+        setPlayStatus(true);
+      }
+    });
   };
 
   //Constante para adelantar y retrodecer musica segun quiera el usuario
@@ -64,6 +86,28 @@ const PlayerContextProvider = (props) => {
       (e.nativeEvent.offsetX / seekBg.current.offsetWidth) *
       audioRef.current.duration;
   };
+
+  // Obtener datos de las canciones
+  const getSongsData = async () => {
+    try {
+      const response = await axios.get(`${url}/api/song/list`);
+      setSongsData(response.data.songs);
+      setTrack(response.data.songs[0]);
+    } catch (error) {
+      console.log(error);
+      
+    }
+  };
+// Obtener datos de los albunes
+  const getAlbumData = async () => {
+    try {
+      const response = await axios.get(`${url}/api/album/list`);
+      setAlbumData(response.data.albums);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -88,6 +132,12 @@ const PlayerContextProvider = (props) => {
     }, 1000);
   }, [audioRef]);
 
+  // creamos otro useEffect para que se ejecute cuando se renderice el componente
+  useEffect(() => {
+    getSongsData();
+    getAlbumData();
+  }, []);
+
   const contextValue = {
     audioRef,
     seekBar,
@@ -104,6 +154,8 @@ const PlayerContextProvider = (props) => {
     previous,
     next,
     seekSong,
+    songsData,
+    albumsData,
   };
 
   return (

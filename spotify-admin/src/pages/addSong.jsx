@@ -11,7 +11,7 @@ const AddSong = () => {
   const [desc, setDesc] = useState("");
   const [album, setAlbum] = useState("none");
   const [loading, setLoading] = useState(false);
-  // const [albumData, setAlbumData] = useState([]);
+  const [albumData, setAlbumData] = useState([]);
 
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
 
@@ -54,6 +54,24 @@ const AddSong = () => {
     }
     setLoading(false);
   };
+
+  const loadAlbumData = async () => {
+    try {
+      const response = await axios.get(`${url}/api/album/list`);
+
+      if (response.data.success) {
+        setAlbumData(response.data.albums);
+      } else {
+        toast.error("Algo salió mal");
+      }
+    } catch (error) {
+      console.error("Error al cargar datos de álbumes:", error);
+    }
+  }
+  useEffect(() => {
+    loadAlbumData();
+  }, []);
+
 
   return loading ? (
     <div className="grid place-items-center min-h-[80vh]">
@@ -131,8 +149,15 @@ const AddSong = () => {
           value={album}
           className="bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[150px]"
         >
-          <option value="none">Ninguno</option>
+          <option value="none">None</option>
           {/* Mapear álbumes de albumData */}
+          {albumData.map((item, index) => (
+            <option 
+            key={index} 
+            value={item.name}>
+              {item.name}
+            </option>
+          ))}
         </select>
       </div>
 
